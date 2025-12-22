@@ -15,17 +15,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Test database connection
-async function testDbConnection() {
-    try {
-        await db.sequelize.authenticate();
-        console.log('✅ Database connected successfully');
-    } catch (error) {
-        console.error('❌ Database connection failed:', error);
-    }
-}
-testDbConnection();
-
 // Root endpoint
 app.get('/', (req, res) => {
     res.json({
@@ -51,7 +40,15 @@ app.use('/graphql', graphqlHTTP({
     }
 }));
 
-// Start server
-app.listen(port, () => {
-    console.log(`🚀 Server started on http://localhost:${port}`);
-});
+db.sequelize.sync({ alter: true })
+    .then(() => {
+        console.log('✅ Database synced successfully');
+
+        app.listen(port, () => {
+            console.log(`🚀 Server started on http://localhost:${port}`);
+        });
+    })
+    .catch((error) => {
+        console.error('❌ Unable to start server:', error);
+        process.exit(1); // stop container if DB fails
+    });

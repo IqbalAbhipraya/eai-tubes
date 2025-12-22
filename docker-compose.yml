@@ -69,7 +69,7 @@ services:
     restart: unless-stopped
 
   enrollment-service:
-    build: ./enrollment-service
+    build: ./enrollGrade-service
     container_name: enrollment_service
     ports:
       - "4003:4003"
