@@ -1,0 +1,95 @@
+version: '3.8'
+
+services:
+  studentDB:
+    image: mysql:8.0
+    container_name: studentDB
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: student_db
+    volumes:
+      - student_db_data:/var/lib/mysql
+    networks:
+      - educonnect_network
+
+  courseDB:
+    image: mysql:8.0
+    container_name: courseDB
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: course_db
+    volumes:
+      - course_db_data:/var/lib/mysql
+    networks:
+      - educonnect_network
+
+  enrollmentGradeDB:
+    image: mysql:8.0
+    container_name: enrollmentGradeDB
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: enrollmentGrade_db
+    volumes:
+      - enroll_db_data:/var/lib/mysql
+    networks:
+      - educonnect_network
+
+  student-service:
+    build: ./student-service
+    container_name: student_service
+    ports:
+      - "4001:4001"
+    environment:
+      - DB_HOST=studentDB
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - DB_NAME=student_db
+      - PORT=4001
+    depends_on:
+      - studentDB
+    networks:
+      - educonnect_network
+    restart: unless-stopped
+
+  course-service:
+    build: ./course-service
+    container_name: course_service
+    ports:
+      - "4002:4002"
+    environment:
+      - DB_HOST=courseDB
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - DB_NAME=course_db
+      - PORT=4002
+    depends_on:
+      - courseDB
+    networks:
+      - educonnect_network
+    restart: unless-stopped
+
+  enrollment-service:
+    build: ./enrollment-service
+    container_name: enrollment_service
+    ports:
+      - "4003:4003"
+    environment:
+      - DB_HOST=enrollmentGradeDB
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - DB_NAME=enrollmentGrade_db
+      - PORT=4003
+    depends_on:
+      - enrollmentGradeDB
+    networks:
+      - educonnect_network
+    restart: unless-stopped
+
+networks:
+  educonnect_network:
+    driver: bridge
+
+volumes:
+  student_db_data:
+  course_db_data:
+  enroll_db_data:
