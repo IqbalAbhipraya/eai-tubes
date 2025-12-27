@@ -1,4 +1,3 @@
-// graphql/resolvers.js
 const { Student } = require('../models');
 
 const resolvers = {
