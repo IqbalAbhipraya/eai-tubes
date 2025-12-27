@@ -166,9 +166,11 @@ async function viewCourseDetails(courseId) {
 
             // Fetch grade if it exists
             const gData = await fetchGraphQL(SERVICES.ENROLLMENT,
-                `query($eid: Int) { gradeByEnrollment(enrollmentID: $eid) { grade } }`, { eid: parseInt(en.id) });
+                `query($eid: Int) { gradeByEnrollment(enrollmentID: $eid) { id grade } }`, { eid: parseInt(en.id) });
 
             const isCurrentUser = currentUser && String(en.studentId) === String(currentUser.id);
+            const gradeId = gData?.gradeByEnrollment?.id || null;
+            const gradeValue = gData?.gradeByEnrollment?.grade || '';
 
             html += `
                 <div class="student-item">
@@ -177,8 +179,8 @@ async function viewCourseDetails(courseId) {
                         <div class="student-email">${sData.student.email}</div>
                     </div>
                     <div class="student-grade">
-                        ${gData?.gradeByEnrollment ? `<span class="grade-badge">${gData.gradeByEnrollment.grade}</span>` : ''}
-                        ${isTeacher ? `<button class="btn btn-secondary btn-sm" onclick="openGradeModal('${en.id}', '${sData.student.nama}')">Grade</button>` : ''}
+                        ${gradeValue ? `<span class="grade-badge">${gradeValue}</span>` : ''}
+                        ${isTeacher ? `<button class="btn btn-secondary btn-sm" onclick="openGradeModal('${en.id}', '${sData.student.nama}', '${gradeId}', '${gradeValue}')">${gradeValue ? 'Update' : 'Grade'}</button>` : ''}
                         ${isTeacher && !isCurrentUser ? `<button class="btn btn-sm" style="background-color: #e74c3c; color: white; margin-left: 5px;" onclick="deleteStudent('${en.studentId}', '${sData.student.nama}')">Delete</button>` : ''}
                     </div>
                 </div>`;
@@ -191,24 +193,40 @@ async function viewCourseDetails(courseId) {
 
 // 5. Grading
 let currentEnrollmentId = null;
-window.openGradeModal = (enrollId, name) => {
+let currentGradeId = null;
+
+window.openGradeModal = (enrollId, name, gradeId, existingGrade) => {
     currentEnrollmentId = enrollId;
+    currentGradeId = gradeId && gradeId !== 'null' ? gradeId : null;
     document.getElementById('gradeStudentName').textContent = name;
+    document.getElementById('gradeValue').value = existingGrade && existingGrade !== 'null' ? existingGrade : '';
+    document.getElementById('gradeSubmitBtn').textContent = currentGradeId ? 'Update Grade' : 'Submit Grade';
     openModal('gradeStudentModal');
 };
 
 document.getElementById('gradeForm').onsubmit = async (e) => {
     e.preventDefault();
     const grade = document.getElementById('gradeValue').value;
-    const mutation = `mutation($eid: Int, $g: String) { addGrade(enrollmentID: $eid, grade: $g) { id grade } }`;
+    let data;
 
-    const data = await fetchGraphQL(SERVICES.ENROLLMENT, mutation, {
-        eid: parseInt(currentEnrollmentId),
-        g: grade
-    });
+    if (currentGradeId) {
+        // Update existing grade
+        const mutation = `mutation($id: ID, $g: String) { updateGrade(id: $id, grade: $g) { id grade } }`;
+        data = await fetchGraphQL(SERVICES.ENROLLMENT, mutation, {
+            id: currentGradeId,
+            g: grade
+        });
+    } else {
+        // Add new grade
+        const mutation = `mutation($eid: Int, $g: String) { addGrade(enrollmentID: $eid, grade: $g) { id grade } }`;
+        data = await fetchGraphQL(SERVICES.ENROLLMENT, mutation, {
+            eid: parseInt(currentEnrollmentId),
+            g: grade
+        });
+    }
 
     if (data) {
-        showToast("Grade submitted!", "success");
+        showToast(currentGradeId ? "Grade updated!" : "Grade submitted!", "success");
         closeModal('gradeStudentModal');
         viewCourseDetails(currentCourseId);
     }
