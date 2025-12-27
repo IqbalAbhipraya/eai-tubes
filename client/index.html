@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Course Management System</title>
     <link rel="stylesheet" href="./style.css">
 </head>
+
 <body>
     <!-- Navbar -->
     <nav class="navbar">
@@ -23,6 +25,7 @@
                 <div class="user-info" id="userInfo" style="display: none;">
                     <div class="user-avatar" id="userAvatar"></div>
                     <span id="userName"></span>
+                    <button class="btn btn-secondary" id="editProfileBtn" style="display: none;">Edit Profile</button>
                     <button class="btn btn-secondary" id="logoutBtn">Logout</button>
                 </div>
                 <button class="btn btn-primary" id="loginBtn">Login</button>
@@ -120,6 +123,12 @@
                     <label class="form-label">Description</label>
                     <p id="detailCourseDescription" style="color: var(--text-secondary);"></p>
                 </div>
+                <div class="form-group" id="courseActionButtons" style="display: none;">
+                    <button class="btn btn-primary" onclick="openEditCourseModal()" style="margin-right: 10px;">✏️ Edit
+                        Course</button>
+                    <button class="btn" style="background-color: #e74c3c;" onclick="deleteCourse()">🗑️ Delete
+                        Course</button>
+                </div>
                 <div class="student-list" id="enrolledStudentsList">
                     <label class="form-label">Enrolled Students</label>
                     <div class="loading">
@@ -127,6 +136,64 @@
                         <p>Loading students...</p>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Course Modal -->
+    <div class="modal" id="editCourseModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Edit Course</h2>
+                <button class="modal-close" onclick="closeModal('editCourseModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="editCourseForm">
+                    <div class="form-group">
+                        <label class="form-label">Course Title</label>
+                        <input type="text" class="form-control" id="editCourseTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" id="editCourseDescription"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Instructor</label>
+                        <input type="text" class="form-control" id="editCourseInstructor" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Update Course</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div class="modal" id="editProfileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Edit Profile</h2>
+                <button class="modal-close" onclick="closeModal('editProfileModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="editProfileForm">
+                    <div class="form-group">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-control" id="editProfileName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="editProfileEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Major (Jurusan)</label>
+                        <input type="text" class="form-control" id="editProfileJurusan">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Enrollment Year</label>
+                        <input type="number" class="form-control" id="editProfileYear">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Update Profile</button>
+                </form>
             </div>
         </div>
     </div>
@@ -159,4 +226,5 @@
 
     <script src="./script.js"></script>
 </body>
+
 </html>
