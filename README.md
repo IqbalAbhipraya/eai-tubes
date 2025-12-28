@@ -68,7 +68,7 @@ The application follows a microservices architecture with 4 main services:
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/IqbalAbhipraya/eai-tubes
    cd eai-tubes
    ```
 
