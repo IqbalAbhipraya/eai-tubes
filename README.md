@@ -26,18 +26,18 @@ The application follows a microservices architecture with 4 main services:
 
 ```
 ┌─────────────────┐     ┌──────────────────┐     ┌─────────────────────┐
-│  Client (Web)   │────▶│  Student Service │────▶│  PostgreSQL (DB1)   │
-│  Port: 8080     │     │  Port: 4001      │     │  Port: 5432         │
+│  Client (Web)   │────▶│  Student Service │────▶│  PostgreSQL (studentDB)   │
+│  Port: 8082     │     │  Port: 4001      │     │           │
 └────────┬────────┘     └──────────────────┘     └─────────────────────┘
          │
          │              ┌──────────────────┐     ┌─────────────────────┐
-         ├─────────────▶│  Course Service  │────▶│  PostgreSQL (DB2)   │
-         │              │  Port: 4002      │     │  Port: 5433         │
+         ├─────────────▶│  Course Service  │────▶│  PostgreSQL (courseDB)   │
+         │              │  Port: 4002      │     │          │
          │              └──────────────────┘     └─────────────────────┘
          │
          │              ┌──────────────────┐     ┌─────────────────────┐
-         └─────────────▶│ EnrollGrade Svc  │────▶│  PostgreSQL (DB3)   │
-                        │  Port: 4003      │     │  Port: 5434         │
+         └─────────────▶│ EnrollGrade Service|  │────▶│  PostgreSQL (enrollGradeDB)   │
+                        │  Port: 4003      │     │         │
                         └──────────────────┘     └─────────────────────┘
 ```
 
@@ -45,7 +45,7 @@ The application follows a microservices architecture with 4 main services:
 
 | Service | Port | Description |
 |---------|------|-------------|
-| Client | 8080 | Static web frontend served via Nginx |
+| Client | 8082 | Static web frontend served via Nginx |
 | Student Service | 4001 | Handles student CRUD operations |
 | Course Service | 4002 | Handles course CRUD operations |
 | EnrollGrade Service | 4003 | Handles enrollments and grading |
@@ -54,7 +54,7 @@ The application follows a microservices architecture with 4 main services:
 
 - **Frontend**: HTML, CSS, JavaScript
 - **Backend**: Node.js, Express.js, GraphQL
-- **Database**: PostgreSQL with Sequelize ORM
+- **Database**: MySQL with Sequelize ORM
 - **Containerization**: Docker & Docker Compose
 
 ## 📋 Prerequisites
@@ -78,14 +78,14 @@ The application follows a microservices architecture with 4 main services:
    ```
 
 3. **Access the application**
-   - Frontend: http://localhost:8080
+   - Frontend: http://localhost:8082
    - Student Service GraphQL: http://localhost:4001/graphql
    - Course Service GraphQL: http://localhost:4002/graphql
    - EnrollGrade Service GraphQL: http://localhost:4003/graphql
 
 4. **Stop services**
    ```bash
-   docker-compose down
+   docker-compose down  
    ```
 
 ### Local Development
@@ -119,7 +119,7 @@ The application follows a microservices architecture with 4 main services:
 5. **Serve the client**
    ```bash
    # Using any static file server, e.g., http-server
-   cd client && npx http-server -p 8080
+   cd client && npx http-server -p 8082
    ```
 
 ## 📡 GraphQL API
@@ -267,7 +267,7 @@ docker-compose up --build -d
 - Verify port mappings are not conflicting
 
 ### CORS errors?
-- All services are configured to accept requests from `localhost:8080`
+- All services are configured to accept requests from `localhost:8082`
 - Check that you're accessing the frontend from the correct URL
 
 ## 📄 License
@@ -276,4 +276,4 @@ This project is for educational purposes.
 
 ## 👥 Contributors
 
-- EAI Tubes Team
+- EAI Tubes Team 5
