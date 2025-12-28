@@ -1,6 +1,6 @@
 # EduHub - Course Management System
 
-A microservices-based course management system built with Node.js, GraphQL, PostgreSQL, and Docker.
+A microservices-based course management system built with Node.js, GraphQL, MySQL, and Docker.
 
 ## 🚀 Features
 
@@ -26,18 +26,18 @@ The application follows a microservices architecture with 4 main services:
 
 ```
 ┌─────────────────┐     ┌──────────────────┐     ┌─────────────────────┐
-│  Client (Web)   │────▶│  Student Service │────▶│  PostgreSQL (studentDB)   │
-│  Port: 8082     │     │  Port: 4001      │     │           │
+│  Client (Web)   │────▶│  Student Service │────▶│  MySQL (studentDB) │
+│  Port: 8082     │     │  Port: 4001      │     │                     │
 └────────┬────────┘     └──────────────────┘     └─────────────────────┘
          │
          │              ┌──────────────────┐     ┌─────────────────────┐
-         ├─────────────▶│  Course Service  │────▶│  PostgreSQL (courseDB)   │
-         │              │  Port: 4002      │     │          │
+         ├─────────────▶│  Course Service  │────▶│  MySQL (courseDB)  │
+         │              │  Port: 4002      │     │                     │
          │              └──────────────────┘     └─────────────────────┘
          │
          │              ┌──────────────────┐     ┌─────────────────────┐
-         └─────────────▶│ EnrollGrade Service|  │────▶│  PostgreSQL (enrollGradeDB)   │
-                        │  Port: 4003      │     │         │
+         └─────────────▶│ EnrollGrade Service|─▶│  MySQL (enrollGradeDB)│
+                        │  Port: 4003      │     │                     │
                         └──────────────────┘     └─────────────────────┘
 ```
 
@@ -97,8 +97,8 @@ The application follows a microservices architecture with 4 main services:
    cd ../enrollGrade-service && npm install
    ```
 
-2. **Set up PostgreSQL databases**
-   - Create 3 PostgreSQL databases
+2. **Set up MySQL databases**
+   - Create 3 MySQL databases
    - Update `config/config.js` in each service with your database credentials
 
 3. **Run migrations**
@@ -222,11 +222,11 @@ Each service has a `config/config.js` file for database configuration:
 ```javascript
 module.exports = {
   development: {
-    username: "postgres",
+    username: "root",
     password: "password",
     database: "database_name",
     host: "localhost",
-    dialect: "postgres"
+    dialect: "mysql"
   }
 }
 ```
@@ -262,7 +262,7 @@ docker-compose up --build -d
 ```
 
 ### Database connection issues?
-- Ensure PostgreSQL containers are running
+- Ensure MySQL containers are running
 - Check database credentials in `docker-compose.yml`
 - Verify port mappings are not conflicting
 
